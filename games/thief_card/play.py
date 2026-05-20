@@ -1,26 +1,28 @@
 import random
+ feature/old-maid
 
 from core.card import Deck
 
+
+import time
+ main
 
 class ThiefCard:
     rank = "THIEF"
 
     def __str__(self):
-        return "도둑"
-
+        return "🃏도둑"
 
 def make_old_maid_deck():
+    from core.card import Deck
     deck = Deck()
     cards = [deck.draw() for _ in range(len(deck))]
     cards.append(ThiefCard())
     random.shuffle(cards)
     return cards
 
-
 def card_rank(card):
     return card.rank
-
 
 def remove_pairs(hand):
     rank_groups = {}
@@ -42,7 +44,6 @@ def remove_pairs(hand):
     random.shuffle(remaining_hand)
     return remaining_hand, removed_count
 
-
 def create_players():
     return [
         {"name": "나", "hand": [], "is_human": True, "out": False},
@@ -51,39 +52,38 @@ def create_players():
         {"name": "컴퓨터3", "hand": [], "is_human": False, "out": False},
     ]
 
-
 def deal_cards(cards, players):
     for index, card in enumerate(cards):
         players[index % len(players)]["hand"].append(card)
 
-
 def remove_starting_pairs(players):
+    print("\n[게임 시작 전] 모두 손패에서 짝이 맞는 카드를 버립니다...")
+    time.sleep(1.5)
     for player in players:
         player["hand"], removed_count = remove_pairs(player["hand"])
-        print(f"{player['name']} 시작 짝 제거: {removed_count}장")
+        print(f"✨ {player['name']}: {removed_count}장 폐기 완료 (남은 카드: {len(player['hand'])}장)")
+        time.sleep(0.5)
         if len(player["hand"]) == 0:
             player["out"] = True
-            print(f"{player['name']}은(는) 시작하자마자 모든 카드를 버렸습니다.")
-
+            print(f"🎉 {player['name']}은(는) 시작하자마자 프리패스 탈출!")
 
 def display_status(players):
-    print("\n--- 현재 카드 수 ---")
+    print("\n================ 테이블 현황 ================")
+    status_list = []
     for player in players:
-        status = "탈출" if player["out"] else f"{len(player['hand'])}장"
-        print(f"{player['name']}: {status}")
-    print("-------------------")
-
+        status = "👑 탈출" if player["out"] else f"[{len(player['hand'])}장]"
+        status_list.append(f"{player['name']}: {status}")
+    print(" | ".join(status_list))
+    print("=============================================")
 
 def display_player_hand(hand):
-    print("\n--- 나의 카드 ---")
+    print("\n🔮 [나의 현재 손패]")
     for index, card in enumerate(hand, start=1):
-        print(f"{index}. {card}")
-    print("----------------")
-
+        print(f"  {index}. {card}")
+    print("---------------------------------------------")
 
 def active_players(players):
     return [player for player in players if not player["out"]]
-
 
 def next_active_index(players, current_index):
     for offset in range(1, len(players) + 1):
@@ -92,11 +92,10 @@ def next_active_index(players, current_index):
             return candidate_index
     return None
 
-
 def ask_human_card_index(target):
     while True:
         choice = input(
-            f"{target['name']}의 카드 중 몇 번째를 뽑을까요? "
+            f"👉 {target['name']}의 카드 중 몇 번째 카드를 뽑을까요? "
             f"(1~{len(target['hand'])}, q: 중단): "
         ).strip().lower()
 
@@ -107,41 +106,44 @@ def ask_human_card_index(target):
             card_index = int(choice) - 1
             if 0 <= card_index < len(target["hand"]):
                 return card_index
-            print("범위 안의 숫자를 입력해 주세요.")
+            print("❌ 올바른 카드 번호를 선택해 주세요.")
         except ValueError:
-            print("숫자 또는 q를 입력해 주세요.")
-
+            print("❌ 숫자 또는 q를 입력해 주세요.")
 
 def draw_card(current_player, target_player):
     if current_player["is_human"]:
         display_player_hand(current_player["hand"])
-        print(f"\n이번에는 {target_player['name']}의 카드를 뽑습니다.")
+        print(f"⚔️  내 차례입니다! {target_player['name']}의 카드를 뺏어옵니다.")
         card_index = ask_human_card_index(target_player)
         if card_index is None:
             return "quit"
     else:
+        print(f"🎲 {current_player['name']}이(가) 신중하게 {target_player['name']}의 카드를 고르는 중...")
+        time.sleep(2.0)
         card_index = random.randrange(len(target_player["hand"]))
-        print(f"\n{current_player['name']}이(가) {target_player['name']}의 카드 한 장을 뽑았습니다.")
 
     picked_card = target_player["hand"].pop(card_index)
     current_player["hand"].append(picked_card)
 
     if current_player["is_human"]:
-        print(f"뽑은 카드: {picked_card}")
-
+        print(f"\n🔥 [결과] {target_player['name']}에게서 [{picked_card}] 카드를 뽑아왔습니다!")
+    else:
+        print(f"\n🔥 [결과] {current_player['name']}(이)가 {target_player['name']}의 {card_index + 1}번째 카드를 뺏어갔습니다!")
+    
+    time.sleep(1.5)
     return "continue"
-
 
 def settle_player_after_turn(player):
     player["hand"], removed_count = remove_pairs(player["hand"])
 
     if removed_count:
-        print(f"{player['name']}이(가) 같은 숫자 카드 {removed_count}장을 버렸습니다.")
+        print(f"✨ {player['name']}이(가) 같은 숫자 짝 [{removed_count}장]을 바닥에 버렸습니다!")
+        time.sleep(1.5)
 
     if len(player["hand"]) == 0:
         player["out"] = True
-        print(f"{player['name']} 탈출! 손에 남은 카드가 없습니다.")
-
+        print(f"🎉 👑 {player['name']} 탈출 성공! 손에 남은 카드가 없습니다!")
+        time.sleep(1.5)
 
 def play_round():
     players = create_players()
@@ -150,8 +152,10 @@ def play_round():
 
     print("\n♣ 4인 도둑잡기 게임을 시작합니다! ♣")
     print("참가자: 나, 컴퓨터1, 컴퓨터2, 컴퓨터3")
-    print("공용 카드 덱(core.card.Deck) 52장에 도둑 카드 1장을 추가했습니다.")
+    print("52장 덱에 '도둑(🃏)' 카드 1장이 추가되었습니다.")
+    
     remove_starting_pairs(players)
+    input("\n[Enter]를 누르면 본격적인 라운드를 시작합니다!")
 
     current_index = 0
 
@@ -159,10 +163,7 @@ def play_round():
         current_player = players[current_index]
 
         if current_player["out"]:
-            next_index = next_active_index(players, current_index)
-            if next_index is None:
-                break
-            current_index = next_index
+            current_index = next_active_index(players, current_index)
             continue
 
         target_index = next_active_index(players, current_index)
@@ -170,8 +171,10 @@ def play_round():
             break
 
         target_player = players[target_index]
+        
         display_status(players)
-        print(f"\n현재 차례: {current_player['name']}")
+        print(f"\n📢 현재 턴: {current_player['name']} -> 대상: {target_player['name']}")
+        print("-" * 45)
 
         draw_result = draw_card(current_player, target_player)
         if draw_result == "quit":
@@ -179,9 +182,14 @@ def play_round():
 
         if len(target_player["hand"]) == 0:
             target_player["out"] = True
-            print(f"{target_player['name']} 탈출! 손에 남은 카드가 없습니다.")
+            print(f"🎉 👑 카드를 빼앗긴 {target_player['name']}이(가) 강제 탈출 성공!")
+            time.sleep(1.5)
 
         settle_player_after_turn(current_player)
+        
+        if not current_player["is_human"]:
+            input("\n[Enter] 다음 턴 보기...")
+            
         current_index = next_active_index(players, current_index) or current_index
 
     remaining_players = active_players(players)
@@ -189,9 +197,12 @@ def play_round():
         return "draw"
 
     loser = remaining_players[0]
-    print(f"\n마지막까지 남은 사람: {loser['name']}")
+    print("\n=============================================")
+    print(f"💀 게임 종료! 마지막까지 도둑을 쥐고 있는 패배자: {loser['name']}")
+    print("=============================================")
     return "lose" if loser["is_human"] else "win"
 
+ feature/old-maid
 
 def get_bet(player_info):
     if player_info["chips"] <= 0:
@@ -208,8 +219,10 @@ def get_bet(player_info):
             print("숫자만 입력 가능합니다.")
 
 
+=======
+ main
 def start_game(player_info):
-    print(f"\n{player_info['name']}님, 4인 도둑잡기 게임을 시작합니다.")
+    print(f"\n{player_info['name']}님, 4인 도둑잡기 게임 룸에 입장하셨습니다.")
 
     bet = get_bet(player_info)
     if bet is None:
@@ -219,8 +232,9 @@ def start_game(player_info):
     chip_change = 0
 
     if result == "quit":
-        print("\n게임을 중단했습니다. 칩은 변동되지 않습니다.")
+        print("\n게임을 중단했습니다. 칩은 유지됩니다.")
     elif result == "win":
+ feature/old-maid
         print("\n승리! 나는 도둑 카드에서 살아남았습니다.")
         chip_change = bet
         player_info["chips"] += bet
@@ -228,9 +242,19 @@ def start_game(player_info):
         print("\n패배! 내가 마지막까지 도둑 카드를 가지고 있습니다.")
         chip_change = -bet
         player_info["chips"] -= bet
-    else:
-        print("\n무승부입니다. 칩은 변동되지 않습니다.")
 
+        print("\n🏆 승리! 도둑을 다른 컴퓨터에게 무사히 떠넘기고 살아남았습니다!")
+        player_info["chips"] += 20
+        print("💰 보상으로 칩 20개를 획득했습니다.")
+    elif result == "lose":
+        print("\n😭 패배! 마지막까지 도둑 카드를 들고 파멸했습니다.")
+        player_info["chips"] = max(0, player_info["chips"] - 10)
+        print("💸 칩 10개를 잃었습니다.")
+ main
+    else:
+        print("\n🤝 무승부입니다. 칩 변동이 없습니다.")
+
+ feature/old-maid
     print("\n--- 정산 결과 ---")
     print(f"배팅 칩: {bet}개")
     print(f"이번 판 결과: {chip_change:+}개")
@@ -243,3 +267,12 @@ def start_game(player_info):
 if __name__ == "__main__":
     test_player = {"name": "Player 1", "chips": 100}
     start_game(test_player)
+=======
+    print(f"🏦 보유 칩 현황: {player_info['chips']}개")
+    input("\n[Enter]를 누르면 메인 로비로 돌아갑니다...")
+    return player_info
+
+# 로비(main.py) 진입용 함수
+def start_thief_card(player_info):
+    return start_game(player_info)
+main
