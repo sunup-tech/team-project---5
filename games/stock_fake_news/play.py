@@ -148,7 +148,7 @@ def play_game(question_count=10):
     return score
 
 
-def start_stock_fake_news(player_info):
+def start_game(player_info):
     print()
     print(f"[주식 가짜 뉴스 판별게임] {player_info['name']}님, 게임을 시작합니다!")
 
@@ -163,6 +163,10 @@ def start_stock_fake_news(player_info):
     return player_info
 
 
+def start_stock_fake_news(player_info):
+    return start_game(player_info)
+
+
 if __name__ == "__main__":
     test_player = {"name": "Player 1", "chips": 100}
-    start_stock_fake_news(test_player)
+    start_game(test_player)

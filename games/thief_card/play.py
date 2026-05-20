@@ -118,7 +118,7 @@ def play_game():
     return "lose"
 
 
-def start_thief_card(player_info):
+def start_game(player_info):
     print()
     print(f"[도둑잡기] {player_info['name']}님, 게임을 시작합니다!")
 
@@ -140,6 +140,10 @@ def start_thief_card(player_info):
             return player_info
 
 
+def start_thief_card(player_info):
+    return start_game(player_info)
+
+
 if __name__ == "__main__":
     test_player = {"name": "Player 1", "chips": 100}
-    start_thief_card(test_player)
+    start_game(test_player)
