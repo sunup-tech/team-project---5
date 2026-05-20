@@ -37,7 +37,9 @@ def main():
 
             game = IndianPoker()
 
-            game.play()
+            player_info = game.play(
+                player_info
+            )
         elif choice == '3':
             player_info = start_thief_card(player_info)
         elif choice == '4':
