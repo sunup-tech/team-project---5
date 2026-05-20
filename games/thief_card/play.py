@@ -194,25 +194,49 @@ def play_round():
     return "lose" if loser["is_human"] else "win"
 
 
+def get_bet(player_info):
+    if player_info["chips"] <= 0:
+        print("칩이 부족합니다! 로비에서 다시 시작해 주세요.")
+        return None
+
+    while True:
+        try:
+            bet = int(input(f"배팅할 칩을 입력하세요 (보유: {player_info['chips']}): "))
+            if 0 < bet <= player_info["chips"]:
+                return bet
+            print("보유한 칩 범위 안에서 1개 이상 입력해 주세요.")
+        except ValueError:
+            print("숫자만 입력 가능합니다.")
+
+
 def start_game(player_info):
     print(f"\n{player_info['name']}님, 4인 도둑잡기 게임을 시작합니다.")
 
+    bet = get_bet(player_info)
+    if bet is None:
+        return player_info
+
     result = play_round()
+    chip_change = 0
 
     if result == "quit":
         print("\n게임을 중단했습니다. 칩은 변동되지 않습니다.")
     elif result == "win":
         print("\n승리! 나는 도둑 카드에서 살아남았습니다.")
-        player_info["chips"] += 20
-        print("보상으로 칩 20개를 얻었습니다.")
+        chip_change = bet
+        player_info["chips"] += bet
     elif result == "lose":
         print("\n패배! 내가 마지막까지 도둑 카드를 가지고 있습니다.")
-        player_info["chips"] = max(0, player_info["chips"] - 10)
-        print("칩 10개를 잃었습니다.")
+        chip_change = -bet
+        player_info["chips"] -= bet
     else:
         print("\n무승부입니다. 칩은 변동되지 않습니다.")
 
-    print(f"현재 보유 칩: {player_info['chips']}개")
+    print("\n--- 정산 결과 ---")
+    print(f"배팅 칩: {bet}개")
+    print(f"이번 판 결과: {chip_change:+}개")
+    print(f"최종 보유 칩: {player_info['chips']}개")
+    print("----------------")
     input("\n[Enter]를 누르면 메인 로비로 돌아갑니다...")
     return player_info
 
