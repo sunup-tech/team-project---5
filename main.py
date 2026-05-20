@@ -4,7 +4,7 @@ import sys
 from games.blackjack.play import start_blackjack
 from games.thief_card.play import start_game as start_thief_card
 from games.stock_fake_news.play import start_game as start_stock_fake_news
-
+from games.indian_poker.indian_poker import IndianPoker
 def main():
     print("=" * 40)
     print("      ♠◆♥♣ 파이썬 카드 게임 미니 로비 ♣♥◆♠")
@@ -22,8 +22,8 @@ def main():
         print("\n" + "-" * 30)
         print(f"[ 현재 자산: {player_info['chips']} 칩 ]")
         print("1. 블랙잭 (팀장님 담당)")
-        print("2. 인디언 포커 (팀원 B 담당 - 준비 중)")
-        print("3. 도둑잡기 (팀원 C 담당)")
+        print("2. 인디언 포커 (팀원 B 담당)")
+        print("3. 도둑잡기 (팀원 C 담당 - 준비 중)")
         print("4. 주식 가짜 뉴스 판별게임")
         print("0. 게임 종료")
         print("-" * 30)
@@ -34,7 +34,10 @@ def main():
             # 블랙잭 실행 (플레이어 정보를 넘겨주어 칩이 연동되도록 함)
             player_info = start_blackjack(player_info)
         elif choice == '2':
-            print("\n[안내] 인디언 포커는 현재 개발 중입니다!")
+
+            game = IndianPoker()
+
+            game.play()
         elif choice == '3':
             player_info = start_thief_card(player_info)
         elif choice == '4':
