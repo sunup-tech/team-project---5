@@ -21,15 +21,15 @@ def main():
     while True:
         print("\n" + "-" * 30)
         print(f"[ 현재 자산: {player_info['chips']} 칩 ]")
-        print("1. 블랙잭 (팀장님 담당)")
-        print("2. 인디언 포커 (팀원 B 담당)")
-        print("3. 도둑잡기 (팀원 C 담당 - 준비 중)")
+        print("1. 블랙잭")
+        print("2. 인디언 포커")
+        print("3. 도둑잡기")
         print("4. 주식 가짜 뉴스 판별게임")
         print("0. 게임 종료")
         print("-" * 30)
         
         choice = input("플레이할 게임 번호를 선택하세요: ").strip()
-
+        
         if choice == '1':
             # 블랙잭 실행 (플레이어 정보를 넘겨주어 칩이 연동되도록 함)
             player_info = start_blackjack(player_info)
